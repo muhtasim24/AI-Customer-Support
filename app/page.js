@@ -1,4 +1,5 @@
 'use client'
+import { TextField, Button } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import { useState } from "react";
 
@@ -46,7 +47,7 @@ export default function Home() {
               >
                 <Box
                   bgcolor={
-                    message.role === 'assistant' ? 'blue' : 'secondary.main'
+                    message.role === 'assistant' ? 'green' : 'secondary.main'
                   }
                   color="white"
                   borderRadius={16}
@@ -56,6 +57,16 @@ export default function Home() {
                 </Box>
                 </Box>
               ))}
+          </Stack>
+          <Stack direction = "row" spacing = {2}>
+            <TextField
+              label = "message"
+              fullWidth
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+            <Button variant= "contained">Send</Button>
+
           </Stack>
           </Stack>
       </Box>
