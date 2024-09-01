@@ -12,7 +12,53 @@ export default function Home() {
   ])
 
   const [message, setMessage] = useState('')
+  //helper function is going to send our current message to the backend and return the response
 
+  const sendMessage = async() => {
+    setMessage('') // so textfield is empty once we press send
+    setMessages((messages) => [
+      ...messages,
+      {role : "user", content: message},
+      {role : "assitant", content: ''},
+    ])
+
+    // fetching the response 
+    const response = fetch('/api/chat', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'applications/json',
+      },
+      // sending the body
+      // JSON string of our messages array
+      // need to define a new array because the state variables might not update in time
+      body:JSON.stringify([...messages, {role: 'user', content: message}]),
+    }).then(async (res) => {
+      const reader = res.body.getReader()
+      const decoder = new TextDecoder() // decode the encoded message
+
+      let result = ''
+      // return a reader and then process it
+      return reader.read().then(function processText({done, value}) {
+        if (done) {
+          return result
+        }
+        // else keep updating the state variable
+        const text = decoder.decode(value || new Int8Array(), {stream:true})
+        setMessages((messages) => {
+          let lastMessage = messages[messages.length - 1]
+          let otherMessages = message.slice(0, messages.length - 1) // this gets all of the messages except the last oen
+          return [
+            ...otherMessages,
+            {
+              ...lastMessage,
+              content: lastMessage.content + text,
+            },
+          ]
+        })
+        return reader.read().then(processText)
+      }) 
+    })
+  }
   return (
       <Box 
       width="100vw" 
@@ -47,7 +93,7 @@ export default function Home() {
               >
                 <Box
                   bgcolor={
-                    message.role === 'assistant' ? 'green' : 'secondary.main'
+                    message.role === 'assistant' ? 'red' : 'secondary.main'
                   }
                   color="white"
                   borderRadius={16}
@@ -65,7 +111,7 @@ export default function Home() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
-            <Button variant= "contained">Send</Button>
+            <Button variant= "contained" onClick={sendMessage}>Send</Button>
 
           </Stack>
           </Stack>
