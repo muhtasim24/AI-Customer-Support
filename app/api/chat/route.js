@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Readable } from "openai/_shims/auto/types";
 
 // system Prompt is how the AI is supposed to behave
