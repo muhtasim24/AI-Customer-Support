@@ -23,15 +23,15 @@ export default function Home() {
     ])
 
     // fetching the response 
-    const response = fetch('/api/chat', {
+    const response = await fetch('/api/chat', {
       method: "POST",
       headers: {
-        'Content-Type': 'applications/json',
+        'Content-Type': 'application/json',
       },
       // sending the body
       // JSON string of our messages array
       // need to define a new array because the state variables might not update in time
-      body:JSON.stringify([...messages, {role: 'user', content: message}]),
+      body: JSON.stringify([...messages, {role: 'user', content: message }]),
     }).then(async (res) => {
       const reader = res.body.getReader()
       const decoder = new TextDecoder() // decode the encoded message
@@ -43,10 +43,10 @@ export default function Home() {
           return result
         }
         // else keep updating the state variable
-        const text = decoder.decode(value || new Int8Array(), {stream:true})
+        const text = decoder.decode(value || new Uint8Array(), {stream:true})
         setMessages((messages) => {
           let lastMessage = messages[messages.length - 1]
-          let otherMessages = message.slice(0, messages.length - 1) // this gets all of the messages except the last oen
+          let otherMessages = messages.slice(0, messages.length - 1) // this gets all of the messages except the last oen
           return [
             ...otherMessages,
             {
@@ -93,7 +93,9 @@ export default function Home() {
               >
                 <Box
                   bgcolor={
-                    message.role === 'assistant' ? 'red' : 'secondary.main'
+                    message.role === 'assistant'
+                      ? 'blue'
+                      : 'green'
                   }
                   color="white"
                   borderRadius={16}
@@ -101,8 +103,8 @@ export default function Home() {
                   >
                     {message.content}
                 </Box>
-                </Box>
-              ))}
+              </Box>
+            ))}
           </Stack>
           <Stack direction = "row" spacing = {2}>
             <TextField
