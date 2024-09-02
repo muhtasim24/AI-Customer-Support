@@ -70,6 +70,13 @@ export default function Home() {
     }
   };
 
+  const handleKeyPress = (event) => {
+    if (event.key === 'Enter' & !event.shiftKey) {
+      event.preventDefaut()
+      sendMessage()
+    }
+  }
+  
   return (
     <Box 
       width="100vw" 
